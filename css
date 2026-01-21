@@ -1,0 +1,182 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: url("Images/GarderBackground.png") center/cover fixed;
+  min-height: 100vh;
+  color: #222;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #000080;
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.logo { font-size: 1.4rem; font-weight: 600; }
+.reset-btn {
+  background: #c0392b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.layout {
+  display: flex;
+  padding-top: 80px;
+  gap: 24px;
+  padding: 90px 20px 40px;
+}
+
+.panel {
+  background: rgba(255,255,255,0.94);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  overflow-y: auto;
+}
+
+.recitation-panel {
+  flex: 6;
+  max-width: 540px;
+}
+
+.attendance-panel {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+h2, h3 {
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0 16px;
+  border: 2px solid #bdc3c7;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:hover { background: #2980b9; }
+
+.qr-box {
+  display: none;
+  text-align: center;
+  margin: 24px 0;
+}
+
+#qrImage {
+  max-width: 240px;
+  border: 8px solid #3498db;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+#reader {
+  width: 100% !important;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.result-box {
+  min-height: 54px;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.success { background: #d4edda; color: #155724; }
+.already  { background: #fff3cd; color: #856404; }
+.error    { background: #f8d7da; color: #721c24; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th {
+  background: #34495e;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.recited    { color: #27ae60; font-weight: 600; }
+.pending    { color: #e67e22; }
+.mark-btn {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mark-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+.attendance-list h3 {
+  color: #2c3e50;
+  text-align: center;
+  margin: 16px 0 12px;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 960px) {
+  .layout {
+    flex-direction: column;
+    padding: 90px 16px 40px;
+  }
+  .recitation-panel, .attendance-panel {
+    max-width: 100%;
+  }
+}
