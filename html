@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gardner Tracker – Attendance & Recitation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">Gardner Tracker</div>
+  <button id="resetBtn" class="reset-btn">Reset Today</button>
+</nav>
+
+<main class="layout">
+
+  <!-- Left: Recitation tracking -->
+  <section class="panel recitation-panel">
+    <h2>Recitation</h2>
+    <p class="subtitle">Who has recited today</p>
+    <table id="recitationTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Right: QR generation + scanning + attendance list -->
+  <section class="panel attendance-panel">
+    <div class="qr-section">
+      <h2>Attendance</h2>
+      <p class="subtitle">Student: generate QR • Teacher: scan</p>
+
+      <input id="studentName" type="text" placeholder="Your full name" autocomplete="off"/>
+      <button onclick="generateQR()">Generate QR</button>
+
+      <div id="imgBox" class="qr-box">
+        <img id="qrImage" src="" alt="QR Code"/>
+        <p>Show this QR to the teacher</p>
+      </div>
+
+      <hr/>
+
+      <p><strong>Teacher:</strong> Scan student QR</p>
+      <div id="reader"></div>
+      <div id="scanResult" class="result-box"></div>
+    </div>
+
+    <div class="attendance-list">
+      <h3>Present Today</h3>
+      <table id="attendanceTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
