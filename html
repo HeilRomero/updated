@@ -15,60 +15,72 @@
   <button id="resetBtn" class="reset-btn">Reset Today</button>
 </nav>
 
+<div class="date-header">
+  Today: <span id="currentDate"></span>
+</div>
+
 <main class="layout">
-
-  <!-- Left: Recitation tracking -->
-  <section class="panel recitation-panel">
-    <h2>Recitation</h2>
-    <p class="subtitle">Who has recited today</p>
-    <table id="recitationTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <!-- Right: QR generation + scanning + attendance list -->
-  <section class="panel attendance-panel">
-    <div class="qr-section">
-      <h2>Attendance</h2>
-      <p class="subtitle">Student: generate QR • Teacher: scan</p>
-
-      <input id="studentName" type="text" placeholder="Your full name" autocomplete="off"/>
-      <button onclick="generateQR()">Generate QR</button>
-
-      <div id="imgBox" class="qr-box">
-        <img id="qrImage" src="" alt="QR Code"/>
-        <p>Show this QR to the teacher</p>
+  <div class="top-row">
+    <!-- Left: Recitation – now wider -->
+    <section class="panel recitation-panel">
+      <h2>Recitation</h2>
+      <p class="subtitle">Students who have recited today</p>
+      <div class="table-container">
+        <table id="recitationTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
+    </section>
+    
+    <!-- Right: Attendance – narrower & moved to right -->
+    <section class="panel attendance-panel">
+      <div class="qr-section">
+        <h2>Attendance</h2>
+        <p class="subtitle">Student: generate QR • Teacher: scan to mark present</p>
+        <h4>Enter Name</h4>
+        <input id="studentName" type="text" placeholder="Enter full name" autocomplete="off"/>
+        <button onclick="generateQR()">Generate My QR</button>
 
-      <hr/>
+        <div id="imgBox" class="qr-box">
+          <img id="qrImage" src="" alt="Your QR Code"/>
+          <p>Show this to the teacher</p>
+        </div>
 
-      <p><strong>Teacher:</strong> Scan student QR</p>
-      <div id="reader"></div>
-      <div id="scanResult" class="result-box"></div>
-    </div>
+        <hr class="divider"/>
 
+        <p class="scan-title"><strong>Teacher:</strong> Scan student QR code</p>
+        <div id="reader" class="scanner-container"></div>
+        <div id="scanResult" class="result-box"></div>
+      </div>
+    </section>
+  </div>
     <div class="attendance-list">
-      <h3>Present Today</h3>
-      <table id="attendanceTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <h3>
+        Present Today
+        <span id="presentCount" class="count-badge">0</span>
+      </h3>
+
+      <div class="table-container">
+        <table id="attendanceTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
-  </section>
 
 </main>
 
