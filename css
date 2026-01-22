@@ -1,205 +1,142 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+// Storage keys
+const ATT_KEY  = 'attendance';
+const REC_KEY  = 'recitation';
+
+// Load data
+let attendance = JSON.parse(localStorage.getItem(ATT_KEY))  || {};
+let recitation = JSON.parse(localStorage.getItem(REC_KEY))  || {};
+
+// Counters (only for display – not saved)
+let attCount = Object.keys(attendance).length;
+
+// DOM
+const attTbody     = document.querySelector('#attendanceTable tbody');
+const recTbody     = document.querySelector('#recitationTable tbody');
+const resultDiv    = document.getElementById('scanResult');
+const nameInput    = document.getElementById('studentName');
+const qrBox        = document.getElementById('imgBox');
+const qrImg        = document.getElementById('qrImage');
+const resetBtn     = document.getElementById('resetBtn');
+
+// Populate on load
+function loadTables() {
+  attTbody.innerHTML = '';
+  recTbody.innerHTML = '';
+
+  // Attendance (present students)
+  Object.entries(attendance).forEach(([name, {date, time}], i) => {
+    attTbody.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${i+1}</td>
+        <td><strong>${name}</strong></td>
+        <td>${time}</td>
+      </tr>
+    `);
+  });
+
+  // Recitation (all who attended + status)
+  Object.keys(attendance).forEach(name => {
+    const recited = !!recitation[name];
+    recTbody.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${recTbody.children.length + 1}</td>
+        <td><strong>${name}</strong></td>
+        <td class="${recited ? 'recited' : 'pending'}">
+          ${recited ? 'Recited' : 'Pending'}
+        </td>
+        <td>
+          ${recited ? '' : `<button class="mark-btn" onclick="markRecited('${name}')">Recited</button>`}
+        </td>
+      </tr>
+    `);
+  });
 }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background: url("Images/GarderBackground.png") center/cover fixed;
-  min-height: 100vh;
-  color: #222;
+function markRecited(name) {
+  recitation[name] = true;
+  localStorage.setItem(REC_KEY, JSON.stringify(recitation));
+  loadTables();
 }
 
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: #000080;
-  color: white;
-  padding: 12px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
+// QR generate
+function generateQR() {
+  const name = nameInput.value.trim();
+  if (!name) return alert('Please enter your name');
+
+  const id   = Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const data = `${name}|${id}`;
+  const url  = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(data)}`;
+
+  qrImg.src = url;
+  qrBox.style.display = 'block';
 }
 
-.logo { font-size: 1.4rem; font-weight: 600; }
-.reset-btn {
-  background: #c0392b;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-}
+// Enter key support
+nameInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter') generateQR();
+});
 
-.layout {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 90px 20px 40px;
-}
+// Scanner
+const scanner = new Html5QrcodeScanner('reader', { fps: 12, qrbox: 240 });
 
-.panel {
-  background: rgba(255,255,255,0.94);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  overflow-y: auto;
-}
+function onScanSuccess(text) {
+  try {
+    const [name] = text.split('|');
+    if (!name) throw new Error();
 
-.recitation-panel {
-  flex: 10;
-}
+    if (attendance[name]) {
+      resultDiv.className = 'result-box already';
+      resultDiv.textContent = `Already present: ${name}`;
+      beep(400, 0.2);
+      setTimeout(() => resultDiv.textContent = '', 2200);
+      return;
+    }
 
-.attendance-panel {
-  flex: 3;
-}
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
+    attendance[name] = { date: now.toLocaleDateString(), time: timeStr };
+    localStorage.setItem(ATT_KEY, JSON.stringify(attendance));
 
-h2, h3 {
-  color: #2c3e50;
-  margin-bottom: 12px;
-}
+    resultDiv.className = 'result-box success';
+    resultDiv.textContent = `Marked present: ${name}`;
+    beep(900, 0.15);
 
-.subtitle {
-  color: #7f8c8d;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-}
+    loadTables();
 
-input {
-  width: 100%;
-  padding: 14px;
-  margin: 12px 0 16px;
-  border: 2px solid #bdc3c7;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
-button {
-  width: 100%;
-  padding: 14px;
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.05rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-button:hover { background: #2980b9; }
-
-.qr-box {
-  display: none;
-  text-align: center;
-  margin: 24px 0;
-}
-
-#qrImage {
-  max-width: 240px;
-  border: 8px solid #3498db;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-.qr-section h4 {
-  color: #2c3e50;
-}
-
-#reader {
-  width: 100% !important;
-  border-radius: 12px;
-  overflow: hidden;
-  margin: 16px 0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-.result-box {
-  min-height: 54px;
-  text-align: center;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 500;
-}
-
-.success { background: #d4edda; color: #155724; }
-.already  { background: #fff3cd; color: #856404; }
-.error    { background: #f8d7da; color: #721c24; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-th {
-  background: #34495e;
-  color: white;
-  padding: 10px;
-  text-align: left;
-}
-
-td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.recited    { color: #27ae60; font-weight: 600; }
-.pending    { color: #e67e22; }
-.mark-btn {
-  background: #27ae60;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.mark-btn:disabled {
-  background: #95a5a6;
-  cursor: not-allowed;
-}
-
-.attendance-list {
-  background: rgba(255,255,255,0.94);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  flex: auto;
-}
-.attendance-list h3 {
-  color: #2c3e50;
-  text-align: center;
-  margin: 16px 0 12px;
-}
-
-.top-row {
-  display: flex;
-  gap: 24px;
-}
-
-.count-badge {
-  background: #3498db;
-  color: white;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 999px;
-  margin-left: 8px;
-  vertical-align: middle;
-}
-
-/* ── Responsive ─────────────────────────────────────── */
-@media (max-width: 960px) {
-  .layout {
-    flex-direction: column;
-    padding: 90px 16px 40px;
-  }
-}   
+    setTimeout(() => resultDiv.textContent = '', 3000);
+  } catch {
+    resultDiv.className = 'result-box error';
+    resultDiv.textContent = 'Invalid QR code';
+    setTimeout(() => resultDiv.textContent = '', 2200);
   }
 }
+
+function beep(freq = 700, dur = 0.1) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.frequency.value = freq;
+  osc.type = 'square';
+  gain.gain.value = 0.12;
+  osc.start();
+  osc.stop(ctx.currentTime + dur);
+}
+
+scanner.render(onScanSuccess);
+
+// Reset everything for today
+resetBtn.onclick = () => {
+  if (!confirm('Reset all attendance and recitation for today?')) return;
+  attendance = {};
+  recitation = {};
+  localStorage.removeItem(ATT_KEY);
+  localStorage.removeItem(REC_KEY);
+  loadTables();
+  resultDiv.textContent = 'Session reset.';
+  setTimeout(() => resultDiv.textContent = '', 3000);
+};
+
+// Initial load
+loadTables();
