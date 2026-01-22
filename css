@@ -38,7 +38,7 @@ body {
 
 .layout {
   display: flex;
-  padding-top: 80px;
+  flex-direction: column;
   gap: 24px;
   padding: 90px 20px 40px;
 }
@@ -52,16 +52,13 @@ body {
 }
 
 .recitation-panel {
-  flex: 6;
-  max-width: 540px;
+  flex: 10;
 }
 
 .attendance-panel {
-  flex: 7;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  flex: 3;
 }
+
 
 h2, h3 {
   color: #2c3e50;
@@ -108,6 +105,10 @@ button:hover { background: #2980b9; }
   border: 8px solid #3498db;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.qr-section h4 {
+  color: #2c3e50;
 }
 
 #reader {
@@ -164,10 +165,33 @@ td {
   cursor: not-allowed;
 }
 
+.attendance-list {
+  background: rgba(255,255,255,0.94);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  flex: auto;
+}
 .attendance-list h3 {
   color: #2c3e50;
   text-align: center;
   margin: 16px 0 12px;
+}
+
+.top-row {
+  display: flex;
+  gap: 24px;
+}
+
+.count-badge {
+  background: #3498db;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
 }
 
 /* ── Responsive ─────────────────────────────────────── */
@@ -176,7 +200,6 @@ td {
     flex-direction: column;
     padding: 90px 16px 40px;
   }
-  .recitation-panel, .attendance-panel {
-    max-width: 100%;
+}   
   }
 }
